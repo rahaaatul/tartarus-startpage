@@ -3,7 +3,7 @@ let saved_config = JSON.parse(localStorage.getItem("CONFIG"));
 const default_config = {
   overrideStorage: true,
   temperature: {
-    location: 'Matão, São Paulo',
+    location: "Tokyo, Japan",
     scale: "C",
   },
   clock: {
@@ -12,98 +12,128 @@ const default_config = {
   },
   search: {
     engines: {
-      g: ["https://google.com/search?q=", "Google"],
+      b: ["https://www.bing.com/search?q=", "Bing"],
       d: ["https://duckduckgo.com/html?q=", "DuckDuckGo"],
-      y: ["https://youtube.com/results?search_query=", "Youtube"],
+      g: ["https://google.com/search?q=", "Google"],
+      p: ["https://www.perplexity.ai/search/new?q=", "Perplexity AI"],
+      pin: ["https://www.pinterest.es/search/pins/?q=", "Pinterest"],
       r: ["https://www.reddit.com/search/?q=", "Reddit"],
-      p: ["https://www.pinterest.es/search/pins/?q=", "Pinterest"],
+      y: ["https://youtube.com/results?search_query=", "Youtube"],
     },
   },
   keybindings: {
-    "s": "search-bar",
-    "q": "config-tab",
+    s: "search-bar",
+    q: "config-tab",
   },
   disabled: [],
   localIcons: false,
-  fastlink: "https://chat.openai.com/",
+  fastlink: "https://chatgpt.com/",
   openLastVisitedTab: true,
   tabs: [
     {
       name: "chi ll",
       background_url: "src/img/banners/cbg-2.gif",
-      categories: [{
-        name: "Social Media",
-        links: [
-          {
-            name: "whatsapp",
-            url: "https://web.whatsapp.com/",
-            icon: "brand-whatsapp",
-            icon_color: "#a9b665",
-          },
-          {
-            name: "twitter",
-            url: "https://twitter.com/home",
-            icon: "brand-twitter-filled",
-            icon_color: "#7daea3",
-          },
-          {
-            name: "reddit",
-            url: "https://www.reddit.com/",
-            icon: "brand-reddit",
-            icon_color: "#e78a4e",
-          },
-          {
-            name: "youtube",
-            url: "https://www.youtube.com/",
-            icon: "brand-youtube-filled",
-            icon_color: "#ea6962",
-          },
-          {
-            name: "twitch",
-            url: "https://www.twitch.tv/",
-            icon: "brand-twitch",
-            icon_color: "#d3869b",
-          },
-        ],
-      }, {
-        name: "Games",
-        links: [
-          {
-            name: "chess",
-            url: "https://www.chess.com/home",
-            icon: "chess-queen-filled",
-            icon_color: "#a9b665",
-          },
-          {
-            name: "monkeytype",
-            url: "https://monkeytype.com/",
-            icon: "keyboard",
-            icon_color: "#e78a4e",
-          },
-          {
-            name: "tetris",
-            url: "https://tetris.com/",
-            icon: "brand-apple-arcade",
-            icon_color: "#ea6962",
-          },
-        ],
-      }, {
-        name: "Video",
-        links: [
-          {
-            name: "disney+",
-            url: "https://www.disneyplus.com/home",
-            icon: "brand-disney",
-            icon_color: "#7daea3",
-          },
-          {
-            name: "primevideo",
-            url: "https://www.primevideo.com/region/eu/?ref_=dv_web_unknown",
-            icon: "brand-amazon",
-            icon_color: "#7daea3",
-          },
-        ],
-      }],
+      categories: [
+        {
+          name: "Social Media",
+          links: [
+            {
+              name: "",
+              url: "https://bsky.app/",
+              icon: "brand-bluesky",
+              icon_color: "#89A8B2",
+            },
+            {
+              name: "",
+              url: "https://discord.com/app/",
+              icon: "brand-discord-filled",
+              icon_color: "#CDC1FF",
+            },
+            {
+              name: "",
+              url: "https://www.facebook.com/",
+              icon: "brand-facebook",
+              icon_color: "#C6E7FF",
+            },
+            {
+              name: "",
+              url: "https://www.instagram.com/",
+              icon: "brand-instagram",
+              icon_color: "#cb9df0",
+            },
+            {
+              name: "",
+              url: "https://www.reddit.com/",
+              icon: "brand-reddit",
+              icon_color: "#e78a4e",
+            },
+            {
+              name: "",
+              url: "https://web.whatsapp.com/",
+              icon: "brand-whatsapp",
+              icon_color: "#a9b665",
+            },
+            {
+              name: "",
+              url: "https://x.com/home",
+              icon: "brand-x",
+              icon_color: "#ffffff",
+            },
+          ],
+        },
+        {
+          name: "Music",
+          links: [
+            {
+              name: "deezer",
+              url: "https://www.deezer.com/en/",
+              icon: "brand-deezer",
+              icon_color: "#FFB38E",
+            },
+            {
+              name: "spotify",
+              url: "https://open.spotify.com/",
+              icon: "brand-spotify",
+              icon_color: "#b1c29e",
+            },
+            {
+              name: "music",
+              url: "https://music.youtube.com/",
+              icon: "brand-youtube",
+              icon_color: "#FF8A8A",
+            },
+          ],
+        },
+        {
+          name: "Video",
+          links: [
+            {
+              name: "kick",
+              url: "https://www.kick.com/",
+              icon: "brand-kick",
+              icon_color: "#D0E8C5",
+            },
+            {
+              name: "rumble",
+              url: "https://www.rumble.com/",
+              icon: "brand-rumble",
+              icon_color: "#B1C29E",
+            },
+            {
+              name: "twitch",
+              url: "https://www.twitch.tv/",
+              icon: "brand-twitch",
+              icon_color: "#d3869b",
+            },
+            {
+              name: "youtube",
+              url: "https://www.youtube.com/",
+              icon: "brand-youtube-filled",
+              icon_color: "#ea6962",
+            },
+          ],
+        },
+      ],
     },
     {
       name: "design",
@@ -287,21 +317,33 @@ const default_config = {
           links: [
             {
               name: "drive",
-              url: "https://drive.google.com/drive/u/0/my-drive",
+              url: "https://drive.google.com/drive/my-drive",
               icon: "brand-google-drive",
               icon_color: "#e78a4e",
             },
             {
               name: "dropbox",
-              url: "https://www.dropbox.com/h?role=personal&di=left_nav",
+              url: "https://www.dropbox.com/home",
               icon: "box-seam",
               icon_color: "#7daea3",
             },
             {
-              name: "fotos",
-              url: "https://photos.google.com/u/1",
-              icon: "photo-filled",
+              name: "mega",
+              url: "https://mega.nz/",
+              icon: "circle-letter-m-filled",
               icon_color: "#ea6962",
+            },
+            {
+              name: "onedrive",
+              url: "https://onedrive.live.com/",
+              icon: "brand-onedrive",
+              icon_color: "#789DBC",
+            },
+            {
+              name: "photos",
+              url: "https://photos.google.com/",
+              icon: "brand-google-photos",
+              icon_color: "#C9E9D2",
             },
           ],
         },
@@ -324,11 +366,11 @@ const default_config = {
 const CONFIG = new Config(saved_config ?? default_config);
 // const CONFIG = new Config(default_config);
 
-(function() {
-  var css = document.createElement('link');
-  css.href = 'src/css/tabler-icons.min.css';
-  css.rel = 'stylesheet';
-  css.type = 'text/css';
+(function () {
+  var css = document.createElement("link");
+  css.href = "src/css/tabler-icons.min.css";
+  css.rel = "stylesheet";
+  css.type = "text/css";
   if (!CONFIG.config.localIcons)
-    document.getElementsByTagName('head')[0].appendChild(css);
+    document.getElementsByTagName("head")[0].appendChild(css);
 })();
