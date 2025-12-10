@@ -6,9 +6,7 @@ class WeatherForecastClient {
 
   async getWeather() {
     return await fetch(this.url)
-      .then(res  => res.json())
-      .then(json => JSON.stringify(json))
-      .then(json => JSON.parse(json))
+      .then(res => res.json())
       .then(data => {
         const temperature = Math.round(data.main.temp);
         const condition = data.weather[0].main.toLowerCase();

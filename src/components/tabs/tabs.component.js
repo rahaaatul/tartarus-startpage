@@ -157,13 +157,6 @@ class Tabs extends Component {
         border-left: 1px solid #444;
       }
 
-          position: absolute;
-          display: none;
-          background: #282828 url("../img/bg-1.gif") repeat left;
->>>>>>> b2b639a (feat: Multi-source icon system, task manager, and enhanced search infrastructure)
-	        transition: all .6s;
-	        # animation: scroll 25s ease-in-out infinite;
-      }
       .categories ul {
           --panelbg: transparent;
           --flavour: var(--accent);
@@ -172,14 +165,6 @@ class Tabs extends Component {
           position: absolute;
           display: none;
           background: #282828 url("../img/bg-1.gif") repeat left;
-	        transition: all .6s;
-	        # animation: scroll 25s ease-in-out infinite;
-      }
-=======
-          position: absolute;
-          display: none;
-          background: #282828 url("../img/bg-1.gif") repeat left;
->>>>>>> b2b639a (feat: Multi-source icon system, task manager, and enhanced search infrastructure)
 	        transition: all .6s;
 	        # animation: scroll 25s ease-in-out infinite;
       }
@@ -393,17 +378,16 @@ class Tabs extends Component {
   template() {
     return `
       <div id="links" class="-">
-
         <div id="panels">
           <div class="categories">
             ${Category.getAll(this.tabs)}
             <search-bar></search-bar>
             <config-tab></config-tab>
-            </div>
-            <task-list></task-list>
-            </div>
-            </div>
-            <status-bar class="!-"></status-bar>
+          </div>
+          <task-list></task-list>
+        </div>
+      </div>
+      <status-bar class="!-"></status-bar>
     `;
   }
 

@@ -76,19 +76,15 @@ class GoogleSuggestionsAPI extends SearchSuggestionsAPI {
 class DuckDuckGoSuggestionsAPI extends SearchSuggestionsAPI {
   async fetchSuggestions(query) {
     const url = `https://duckduckgo.com/ac/?q=${encodeURIComponent(query)}&type=list`;
-    console.log('Making DuckDuckGo API request:', url);
 
     const response = await fetch(url);
-    console.log('DuckDuckGo API response status:', response.status);
     if (!response.ok) {
       throw new Error(`DuckDuckGo API error: ${response.status}`);
     }
 
     const data = await response.json();
-    console.log('DuckDuckGo API response data:', data);
     // DuckDuckGo returns: [{"phrase": "suggestion1"}, {"phrase": "suggestion2"}, ...]
     const suggestions = Array.isArray(data) ? data.map(item => item.phrase).filter(Boolean) : [];
-    console.log('Extracted DuckDuckGo suggestions:', suggestions);
     return suggestions;
   }
 }
@@ -109,7 +105,6 @@ class InlineAutocompleteEngine {
    * @returns {Promise<string|null>} - Best matching suggestion or null
    */
   async findPrediction(query) {
-    console.log('findPrediction called with query:', query);
     if (!query || query.length < 1) return null;
 
     const cacheKey = query.toLowerCase();
@@ -118,25 +113,21 @@ class InlineAutocompleteEngine {
     if (this.cache.has(cacheKey)) {
       const cached = this.cache.get(cacheKey);
       if (Date.now() - cached.timestamp < 5000) { // 5 second cache for API results
-        console.log('Returning cached suggestion:', cached.suggestion);
         return cached.suggestion;
       }
     }
 
     // Check if there's already a pending request for this query
     if (this.pendingRequests.has(cacheKey)) {
-      console.log('Returning pending request for:', cacheKey);
       return this.pendingRequests.get(cacheKey);
     }
 
     // Start new API request
-    console.log('Starting new API request for:', query);
     const requestPromise = this.fetchAndCachePrediction(query, cacheKey);
     this.pendingRequests.set(cacheKey, requestPromise);
 
     try {
       const result = await requestPromise;
-      console.log('API request completed, result:', result);
       return result;
     } finally {
       this.pendingRequests.delete(cacheKey);
@@ -439,10 +430,8 @@ class InlineAutocompleteController {
    */
   async handleInput(event) {
     const value = event.target.value;
-    console.log('handleInput called with value:', value);
     try {
       const suggestion = await this.engine.findPrediction(value);
-      console.log('Got suggestion:', suggestion);
       if (suggestion) {
         this.ghostRenderer.renderSuggestion(value, suggestion);
       } else {
@@ -968,13 +957,11 @@ class Search extends Component {
   }
 
   activate() {
-    console.log('Activating search');
     this.startProxyServer();
     this.refs.search.classList.add('active');
     this.refs.input.scrollIntoView();
     setTimeout(() => {
       this.refs.input.focus();
-      console.log('Search activated and focused');
     }, 100);
   }
 
@@ -1151,11 +1138,8 @@ class Search extends Component {
   async startProxyServer() {
     const isRunning = await this.isProxyServerRunning();
     if (isRunning) {
-      console.log('Proxy server is already running');
       return;
     }
-
-    console.log('Proxy server is not running. Attempting to start it...');
 
     try {
       // Attempt to start the proxy server
@@ -1166,14 +1150,11 @@ class Search extends Component {
         signal: AbortSignal.timeout(5000) // 5 second timeout
       });
 
-      if (response.ok) {
-        console.log('Proxy server started successfully');
-      } else {
+      if (!response.ok) {
         throw new Error('Failed to start server via API');
       }
     } catch (error) {
       console.warn('Could not start proxy server automatically:', error);
-      console.log('Please start the proxy server manually with: node proxy-server.js');
 
       // Show a user-friendly message
       this.showServerStartMessage();
@@ -1184,15 +1165,8 @@ class Search extends Component {
    * Stop the proxy server
    */
   async stopProxyServer() {
-    const isRunning = await this.isProxyServerRunning();
-    if (!isRunning) {
-      console.log('Proxy server is not running');
-      return;
-    }
-
-    console.log('Search completed. You can stop the proxy server manually if needed.');
     // Note: In a browser environment, we cannot directly stop Node.js processes
-    // The user needs to stop the proxy server externally
+    // The user needs to stop the proxy server externally if needed
   }
 
   /**
@@ -1247,19 +1221,14 @@ class Search extends Component {
 
       // Initialize API client based on configuration
       const suggestionsConfig = CONFIG.search.suggestions || { provider: 'google', enabled: true };
-      console.log('Search suggestions config:', suggestionsConfig);
       let apiClient = null;
 
       if (suggestionsConfig.enabled) {
         if (suggestionsConfig.provider === 'duckduckgo') {
           apiClient = new DuckDuckGoSuggestionsAPI();
-          console.log('Using DuckDuckGo API client');
         } else {
           apiClient = new GoogleSuggestionsAPI(); // Default to Google
-          console.log('Using Google API client');
         }
-      } else {
-        console.log('Search suggestions disabled');
       }
 
       // Initialize inline autocomplete modules after component is rendered
@@ -1267,7 +1236,6 @@ class Search extends Component {
       this.chipManager = new InlineChipManager(this.refs);
       this.ghostRenderer = new InlineGhostRenderer(this.refs, this.chipManager);
       this.autocompleteController = new InlineAutocompleteController(this, this.autocompleteEngine, this.chipManager, this.ghostRenderer);
-      console.log('Search component initialized');
     });
   }
 }
