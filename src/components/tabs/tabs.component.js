@@ -104,6 +104,7 @@ class Tabs extends Component {
       this.resources.fonts.roboto,
       this.resources.fonts.raleway,
       this.resources.libs.awoo,
+      this.resources.icons.iconify
     ];
   }
 

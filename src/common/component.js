@@ -10,9 +10,6 @@ class Component extends HTMLElement {
       raleway: '<link href="https://fonts.googleapis.com/css?family=Raleway:600" rel="stylesheet">'
     },
     icons: {
-      material: '<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" type="text/css">',
-      cryptofont: '<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/monzanifabio/cryptofont/cryptofont.css">',
-      tabler: '<link rel="stylesheet" href="src/css/tabler-icons.min.css">',
       iconify: '<script src="src/css/iconify-webcomponent.js"></script>'
     },
     libs: {
@@ -26,9 +23,9 @@ class Component extends HTMLElement {
     this.shadow = this.attachShadow({ mode: 'open' });
   }
 
-  style()    { return null; }
+  style() { return null; }
   template() { return null; }
-  imports()  { return []; }
+  imports() { return []; }
 
   /**
    * Reference an external css file
@@ -72,7 +69,7 @@ class Component extends HTMLElement {
    */
   async buildHTML() {
     return await this.loadStyles() +
-           await this.template();
+      await this.template();
   }
 
   /**

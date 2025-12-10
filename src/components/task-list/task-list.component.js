@@ -31,7 +31,7 @@ class TaskList extends Component {
   imports() {
     return [
       this.resources.fonts.roboto,
-      this.resources.icons.material
+      this.resources.icons.iconify
     ];
   }
 
@@ -256,7 +256,6 @@ class TaskList extends Component {
       }
 
       .category-icon {
-        font-size: 14px;
         width: 16px;
         text-align: center;
         opacity: 0.6;
@@ -390,10 +389,10 @@ class TaskList extends Component {
     return `
       <div class="category active-category">
         <div class="category-header active-header" data-category="active">
-          <div class="category-icon">⚡</div>
+          <iconify-icon class="category-icon" icon="tabler:bolt" style="font-size: 14px;"></iconify-icon>
           <div class="category-title">Active Tasks</div>
           <div class="category-count">${activeTasks.length}</div>
-          <div class="category-toggle">${this.categoriesCollapsed.active ? '▶' : '▼'}</div>
+          <iconify-icon class="category-toggle" icon="${this.categoriesCollapsed.active ? 'tabler:chevron-right' : 'tabler:chevron-down'}" style="font-size: 10px;"></iconify-icon>
         </div>
         <div class="category-content active-content" style="display: ${this.categoriesCollapsed.active ? 'none' : 'block'};">
           <ul class="task-list">
@@ -404,10 +403,10 @@ class TaskList extends Component {
 
       <div class="category complete-category">
         <div class="category-header complete-header" data-category="complete">
-          <div class="category-icon">✓</div>
+          <iconify-icon class="category-icon" icon="tabler:check" style="font-size: 14px;"></iconify-icon>
           <div class="category-title">Completed Tasks</div>
           <div class="category-count">${completedTasks.length}</div>
-          <div class="category-toggle">${this.categoriesCollapsed.complete ? '▶' : '▼'}</div>
+          <iconify-icon class="category-toggle" icon="${this.categoriesCollapsed.complete ? 'tabler:chevron-right' : 'tabler:chevron-down'}" style="font-size: 10px;"></iconify-icon>
         </div>
         <div class="category-content complete-content" style="display: ${this.categoriesCollapsed.complete ? 'none' : 'block'};">
           <ul class="task-list">
@@ -424,10 +423,10 @@ class TaskList extends Component {
 
       <div class="category deleted-category">
         <div class="category-header deleted-header" data-category="deleted">
-          <div class="category-icon">🗑️</div>
+          <iconify-icon class="category-icon" icon="tabler:trash" style="font-size: 14px;"></iconify-icon>
           <div class="category-title">Deleted Tasks</div>
           <div class="category-count">${this.deletedTasks.length}</div>
-          <div class="category-toggle">${this.categoriesCollapsed.deleted ? '▶' : '▼'}</div>
+          <iconify-icon class="category-toggle" icon="${this.categoriesCollapsed.deleted ? 'tabler:chevron-right' : 'tabler:chevron-down'}" style="font-size: 10px;"></iconify-icon>
         </div>
         <div class="category-content deleted-content" style="display: ${this.categoriesCollapsed.deleted ? 'none' : 'block'};">
           <ul class="task-list">
@@ -455,8 +454,8 @@ class TaskList extends Component {
           ${category === 'active' || category === 'complete' ? `<input type="checkbox" class="task-checkbox" ${task.completed ? 'checked' : ''}>` : ''}
           <span class="task-text" ondblclick="this.parentElement.querySelector('.task-edit-input').style.display='inline-block'; this.style.display='none'; this.parentElement.querySelector('.task-edit-input').focus(); this.parentElement.querySelector('.task-edit-input').value=this.textContent;">${this.escapeHtml(task.text)}</span>
           <input type="text" class="task-edit-input" style="display:none;" onblur="this.previousElementSibling.style.display='inline-block'; this.style.display='none'; if(this.value.trim()) { window.taskListComponent.editTask(${globalIndex}, this.value.trim()); }" onkeydown="if(event.key==='Enter'){this.blur();} if(event.key==='Escape'){this.value=this.previousElementSibling.textContent; this.blur();}">
-          ${category === 'active' || category === 'complete' ? `<button class="delete-task-btn" title="Delete task"><i class="material-icons" style="font-size: 16px; line-height: 1;">delete</i></button>` : ''}
-          ${category === 'deleted' ? `<button class="restore-task-btn" title="Restore task" onclick="window.taskListComponent.restoreTask(${index})"><i class="material-icons" style="font-size: 16px; line-height: 1;">restore</i></button>` : ''}
+          ${category === 'active' || category === 'complete' ? `<button class="delete-task-btn" title="Delete task"><iconify-icon icon="tabler:trash" style="font-size: 16px; line-height: 1;"></iconify-icon></button>` : ''}
+          ${category === 'deleted' ? `<button class="restore-task-btn" title="Restore task" onclick="window.taskListComponent.restoreTask(${index})"><iconify-icon icon="tabler:arrow-back-up" style="font-size: 16px; line-height: 1;"></iconify-icon></button>` : ''}
         </li>
       `;
     }).join('');

@@ -840,7 +840,7 @@ class Search extends Component {
   imports() {
     return [
       this.resources.fonts.roboto,
-      this.resources.icons.material
+      this.resources.icons.iconify
     ];
   }
 
@@ -855,7 +855,7 @@ class Search extends Component {
                   <div class="inline-ghost-layer"></div>
                   <input type="text" spellcheck="false" placeholder="search" aria-autocomplete="inline" role="combobox" aria-expanded="false">
                 </div>
-                <button class="close"><i class="material-icons">&#xE5CD;</i></button>
+                <button class="close"><iconify-icon icon="tabler:x" style="font-size: 20px;"></iconify-icon></button>
               </div>
             </div>
             <div class="engine-tiles"></div>

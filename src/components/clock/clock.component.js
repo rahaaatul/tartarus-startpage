@@ -10,8 +10,8 @@ class Clock extends Component {
 
   imports() {
     return [
-      this.resources.icons.material,
-      this.resources.fonts.roboto
+      this.resources.fonts.roboto,
+      this.resources.icons.iconify
     ];
   }
 
@@ -34,7 +34,7 @@ class Clock extends Component {
 
   template() {
     return `
-        <span class="material-icons clock-icon">schedule</span>
+        <iconify-icon class="clock-icon" icon="tabler:clock" style="color: #ea6962; font-size: 10pt; margin-right: 10px;"></iconify-icon>
         <p class="clock-time"></p>
     `;
   }

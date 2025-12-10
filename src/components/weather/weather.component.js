@@ -8,17 +8,17 @@ class Weather extends Component {
   forecasts = [
     {
       conditions: ['clouds', 'mist', 'haze', 'smoke'],
-      icon: 'cloud_queue',
+      icon: 'cloud',
       color: 'cloudy'
     },
     {
       conditions: ['drizzle', 'snow', 'rain'],
-      icon: 'opacity',
+      icon: 'droplets',
       color: 'cloudy'
     },
     {
       conditions: ['clear'],
-      icon: 'wb_sunny',
+      icon: 'sun',
       color: 'sunny'
     },
     {
@@ -49,8 +49,8 @@ class Weather extends Component {
 
   imports() {
     return [
-      this.resources.icons.material,
-      this.resources.fonts.roboto
+      this.resources.fonts.roboto,
+      this.resources.icons.iconify
     ];
   }
 
@@ -109,7 +109,7 @@ class Weather extends Component {
   async template() {
     return `
         <p class="+ weather-temperature">
-            <span class="weather-icon" class="+"><i class="material-icons weather-condition-icon sunny">wb_sunny</i></span>
+            <span class="weather-icon" class="+"><iconify-icon class="weather-condition-icon sunny" icon="tabler:sun" style="font-size: 14pt;"></iconify-icon></span>
             <span class="weather-temperature-location">${this.location}</span>
             <span class="weather-temperature-value">1</span>
             º<span class="weather-temperature-scale">${this.temperatureScale}</span>
@@ -148,8 +148,9 @@ class Weather extends Component {
     const { icon, color } = this.getForecast(condition);
 
     this.refs.temperature = this.convertScale(temperature);
-    this.refs.condition = icon;
+    this.refs.condition.icon = `tabler:${icon}`;
     this.refs.scale = this.temperatureScale;
+    this.refs.condition.classList.remove('sunny', 'cloudy');
     this.refs.condition.classList.add(color);
   }
 

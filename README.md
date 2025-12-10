@@ -16,7 +16,7 @@
 
 ## 💻 Preview
 
-https://github.com/AllJavi/tartarus-startpage/assets/49349604/9a2a3f4c-33ef-4eb3-9243-cc160a56a181
+https://github.com/rahaaatul/tartarus-startpage/assets/49349604/9a2a3f4c-33ef-4eb3-9243-cc160a56a181
 
 ## 🛠️ Installation & Setup
 
@@ -26,7 +26,7 @@ https://github.com/AllJavi/tartarus-startpage/assets/49349604/9a2a3f4c-33ef-4eb3
 ### Installation Steps
 ```bash
 # Clone the repository
-git clone https://github.com/AllJavi/tartarus-startpage.git
+git clone https://github.com/rahaaatul/tartarus-startpage.git
 cd tartarus-startpage
 
 # Install Node.js dependencies
@@ -46,7 +46,7 @@ The proxy server enables:
 
 **Keep it running in the background while using the startpage.**
 
-This start page is based on the [dawn](https://github.com/b-coimbra/dawn) repository, which has even more functionality. I've tweaked the page's style a bit to match my [dotfiles](https://github.com/AllJavi/tartarus-dotfiles), and I've added some features to make it more comfortable.
+This start page is based on the [dawn](https://github.com/b-coimbra/dawn) repository, which has even more functionality. I've tweaked the page's style a bit to match my [dotfiles](https://github.com/rahaaatul/tartarus-dotfiles), and I've added some features to make it more comfortable.
 
 ## 🎨 Iconify Multi-Source System
 
@@ -84,7 +84,7 @@ This start page is based on the [dawn](https://github.com/b-coimbra/dawn) reposi
 
 ## ⚙️ Configuration Dialog
 
-![config-dialog](https://github.com/AllJavi/tartarus-startpage/assets/49349604/3b42c650-b5bb-4a7d-a358-cfa5a8915966)
+![config-dialog](https://github.com/rahaaatul/tartarus-startpage/assets/49349604/3b42c650-b5bb-4a7d-a358-cfa5a8915966)
 
 The default configuration file is [userconfig.js](userconfig.js), but you can change it in the configuration dialog. You can find more information about how the file works in the [original repository](https://github.com/b-coimbra/dawn). The available components are tabs, a clock, and weather.
 
@@ -95,7 +95,7 @@ Additionally, there are two different new options:
 
 ## 🔍 Search Dialog
 
-![search-dialog](https://github.com/AllJavi/tartarus-startpage/assets/49349604/3f76323d-88c4-41b6-b93d-e4cceb1780b7)
+![search-dialog](https://github.com/rahaaatul/tartarus-startpage/assets/49349604/3f76323d-88c4-41b6-b93d-e4cceb1780b7)
 
 The search dialog allows you to display a search bar with various search engines defined in the configuration. To select each one, you simply need to prefix the query with the corresponding `!<id>`.
 By default, the defined search engines are:

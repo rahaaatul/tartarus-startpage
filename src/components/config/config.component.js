@@ -105,7 +105,7 @@ class ConfigTab extends Component {
   imports() {
     return [
       this.resources.fonts.roboto,
-      this.resources.icons.material
+      this.resources.icons.iconify
     ];
   }
 
@@ -115,7 +115,7 @@ class ConfigTab extends Component {
           <div>
             <textarea type="text" spellcheck="false"></textarea>
             <button class="save">Save</button>
-            <button class="close"><i class="material-icons">&#xE5CD;</i></button>
+            <button class="close"><iconify-icon icon="tabler:x"></iconify-icon></button>
           </div>
         </div>
     `;
