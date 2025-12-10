@@ -1,15 +1,15 @@
 <div align="center">
     <img src="/img/README-decorator.png" width=300/><br/>
-    <a href="https://github.com/rahaaatul/tartarus-startpage/stargazers">
+    <a href="https://github.com/rahaatul/tartarus-startpage/stargazers">
         <img src="https://img.shields.io/github/stars/rahaaatul/tartarus-startpage?color=a9b665&style=for-the-badge&logo=starship">
     </a>
-    <a href="https://github.com/rahaaatul/tartarus-startpage/issues">
+    <a href="https://github.com/rahaatul/tartarus-startpage/issues">
         <img src="https://img.shields.io/github/issues/rahaaatul/tartarus-startpage?color=ea6962&style=for-the-badge&logo=codecov">
     </a>
-    <a href="https://github.com/rahaaatul/tartarus-startpage/network/members">
-        <img src="https://img.shields.io/github/forks/rahaaatul/tartarus-startpage?color=7daea3&style=for-the-badge&logo=jfrog-bintray">
+    <a href="https://github.com/rahaatul/tartarus-startpage/network/members">
+        <img src="https://img.shields.io/github/forks/rahaatul/tartarus-startpage?color=7daea3&style=for-the-badge&logo=jfrog-bintray">
     </a>
-    <a href="https://github.com/rahaaatul/tartarus-startpage/blob/master/LICENSE">
+    <a href="https://github.com/rahaatul/tartarus-startpage/blob/master/LICENSE">
         <img src="https://img.shields.io/badge/license-MIT-orange.svg?color=d4be98&style=for-the-badge&logo=archlinux">
     </a>
 </div>
@@ -18,9 +18,6 @@
 
 https://github.com/AllJavi/tartarus-startpage/assets/49349604/9a2a3f4c-33ef-4eb3-9243-cc160a56a181
 
-<<<<<<< HEAD
-This start page is based on the **[dawn](https://github.com/b-coimbra/dawn)** repository, which has even more functionality.
-=======
 ## 🛠️ Installation & Setup
 
 ### Prerequisites
@@ -50,7 +47,6 @@ The proxy server enables:
 **Keep it running in the background while using the startpage.**
 
 This start page is based on the [dawn](https://github.com/b-coimbra/dawn) repository, which has even more functionality. I've tweaked the page's style a bit to match my [dotfiles](https://github.com/AllJavi/tartarus-dotfiles), and I've added some features to make it more comfortable.
->>>>>>> b2b639a (feat: Multi-source icon system, task manager, and enhanced search infrastructure)
 
 ## 🎨 Iconify Multi-Source System
 
@@ -126,11 +122,6 @@ By default, the defined search engines are:
 | ------------------------------------------------ | ------------------------------------------------ | ------------------------------------------------ | ------------------------------------------------ |
 | <img src="src/img/banners/cbg-10.gif" width=175> | <img src="src/img/banners/cbg-11.gif" width=175> | <img src="src/img/banners/cbg-12.gif" width=175> | <img src="src/img/banners/cbg-13.gif" width=175> |
 
-<<<<<<< HEAD
-## Local Icons
-
-If you want to reduce the loading time of the icons, you could install the [icon font](https://github.com/rahaaatul/tartarus-startpage/tree/master/src/fonts) locally and activate the option `"localIcons": true` in the config to disable the remote styles.
-=======
 ## 🏠 Local Icons (Legacy)
 
 **Note**: Previous versions used local Tabler icon fonts. The new **Iconify system** automatically handles CDN/local optimization.
@@ -138,10 +129,9 @@ If you want to reduce the loading time of the icons, you could install the [icon
 If you prefer local-only operation, Iconify supports self-hosting selected icon collections. However, the CDN approach provides better performance and instant access to all collections.
 
 ### Migration from Legacy Icons
--existing Tabler icons work unchanged
+- Existing Tabler icons work unchanged
 - Add `icon_source: "tabler"` for explicit source specification
 - No font files needed - Iconify handles everything
->>>>>>> b2b639a (feat: Multi-source icon system, task manager, and enhanced search infrastructure)
 
 ## Credit
 
