@@ -15,6 +15,20 @@ class Config {
         y: ['https://youtube.com/results?search_query=', 'Youtube'],
       }
     },
+    notes: {
+      enabled: true,
+      autoSave: true,
+      autoSaveDelay: 1000, // milliseconds
+      maxLength: 100000, // 100KB
+      conflictResolution: 'prompt', // 'prompt', 'overwrite', 'merge'
+      versionHistory: true,
+      backupEnabled: true,
+      maxBackups: 10,
+      keyboardShortcuts: {
+        open: 'ctrl+n',
+        save: 'ctrl+s'
+      }
+    },
     disabled: [],
     openLastVisitedTab: false,
     tabs: [],
