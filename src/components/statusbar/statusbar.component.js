@@ -247,10 +247,30 @@ class Statusbar extends Component {
 
     document.onkeydown = (e) => this.handleKeyPress(e);
     document.onwheel = (e) => this.handleWheelScroll(e);
+    // Listen for notes trigger clicks
+    if (typeof eventBus !== 'undefined') {
+      eventBus.subscribe('notes:trigger:clicked', () => {
+        const notesComponent = document.querySelector('notes-popup');
+        if (notesComponent && typeof notesComponent.show === 'function') {
+          notesComponent.show();
+        }
+      });
+    }
+
     this.refs.fastlink.onclick = () => {
-      console.log(CONFIG.fastlink);
-      if (CONFIG.config.fastlink) {
-        window.location.href = CONFIG.config.fastlink;
+      console.log('Pokeball clicked');
+      // Open notes popup (legacy support)
+      const notesComponent = document.querySelector('notes-popup');
+      console.log('Notes component found:', notesComponent);
+      if (notesComponent) {
+        if (typeof notesComponent.show === 'function') {
+          notesComponent.show();
+        } else if (typeof notesComponent.showNotesPopup === 'function') {
+          // Fallback to old method
+          notesComponent.showNotesPopup();
+        }
+      } else {
+        console.log('Notes component not found');
       }
     }
 
