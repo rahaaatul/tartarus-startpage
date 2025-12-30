@@ -5,6 +5,8 @@ const components = {
   'current-time': Clock,
   'weather-forecast': Weather,
   'tabs-list': Tabs,
+  'notes-popup': Notes,
+  'notes-trigger': NotesTrigger,
 };
 
 Object.keys(components).forEach(componentName => {
