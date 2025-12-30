@@ -157,51 +157,21 @@ app.get('/api/start-server', (req, res) => {
   });
 });
 
-// Notes API endpoints with enhanced features
+// Notes API endpoints
 const NOTES_FILE = path.join(__dirname, 'notes.json');
-const NOTES_BACKUP_DIR = path.join(__dirname, 'backups');
 
-// Ensure backup directory exists
-if (!fs.existsSync(NOTES_BACKUP_DIR)) {
-  fs.mkdirSync(NOTES_BACKUP_DIR, { recursive: true });
-}
-
-// Helper function to create backup
-function createBackup(notesData) {
-  const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-  const backupFile = path.join(NOTES_BACKUP_DIR, `notes-${timestamp}.json`);
-  try {
-    fs.writeFileSync(backupFile, JSON.stringify(notesData, null, 2));
-    // Keep only last 10 backups
-    const backups = fs.readdirSync(NOTES_BACKUP_DIR)
-      .filter(file => file.startsWith('notes-'))
-      .sort()
-      .reverse();
-
-    if (backups.length > 10) {
-      backups.slice(10).forEach(backup => {
-        fs.unlinkSync(path.join(NOTES_BACKUP_DIR, backup));
-      });
-    }
-  } catch (error) {
-    console.warn('Failed to create backup:', error.message);
-  }
-}
-
-// GET /api/v1/notes - Load notes with versioning
+// GET /api/v1/notes - Load notes
 app.get('/api/v1/notes', (req, res) => {
   try {
-    let notes = { content: '', timestamp: new Date().toISOString(), version: 1 };
+    let notes = { content: '', timestamp: new Date().toISOString() };
 
     if (fs.existsSync(NOTES_FILE)) {
       const data = fs.readFileSync(NOTES_FILE, 'utf8');
       const parsedNotes = JSON.parse(data);
 
-      // Ensure version exists
       notes = {
         content: parsedNotes.content || '',
-        timestamp: parsedNotes.timestamp || new Date().toISOString(),
-        version: parsedNotes.version || 1
+        timestamp: parsedNotes.timestamp || new Date().toISOString()
       };
     }
 
@@ -220,7 +190,7 @@ app.get('/api/v1/notes', (req, res) => {
   }
 });
 
-// POST /api/v1/notes - Save notes with versioning and validation
+// POST /api/v1/notes - Save notes
 app.post('/api/v1/notes', (req, res) => {
   try {
     const notesData = req.body;
@@ -242,33 +212,11 @@ app.post('/api/v1/notes', (req, res) => {
       });
     }
 
-    // Load existing notes for versioning
-    let existingVersion = 1;
-    if (fs.existsSync(NOTES_FILE)) {
-      try {
-        const existing = JSON.parse(fs.readFileSync(NOTES_FILE, 'utf8'));
-        existingVersion = (existing.version || 1) + 1;
-      } catch (error) {
-        console.warn('Failed to read existing notes for versioning:', error.message);
-      }
-    }
-
     // Prepare new notes data
     const newNotesData = {
       content: notesData.content,
-      timestamp: notesData.timestamp || new Date().toISOString(),
-      version: notesData.version || existingVersion
+      timestamp: new Date().toISOString()
     };
-
-    // Create backup of previous version
-    if (fs.existsSync(NOTES_FILE)) {
-      try {
-        const previousData = JSON.parse(fs.readFileSync(NOTES_FILE, 'utf8'));
-        createBackup(previousData);
-      } catch (error) {
-        console.warn('Failed to create backup:', error.message);
-      }
-    }
 
     // Write new notes
     fs.writeFileSync(NOTES_FILE, JSON.stringify(newNotesData, null, 2));
@@ -277,7 +225,6 @@ app.post('/api/v1/notes', (req, res) => {
       success: true,
       message: 'Notes saved successfully',
       data: {
-        version: newNotesData.version,
         timestamp: newNotesData.timestamp
       },
       timestamp: new Date().toISOString()
@@ -292,133 +239,10 @@ app.post('/api/v1/notes', (req, res) => {
   }
 });
 
-// GET /api/v1/notes/version/:version - Load specific version
-app.get('/api/v1/notes/version/:version', (req, res) => {
-  try {
-    const requestedVersion = parseInt(req.params.version);
-
-    if (isNaN(requestedVersion) || requestedVersion < 1) {
-      return res.status(400).json({
-        success: false,
-        error: 'Invalid version number',
-        timestamp: new Date().toISOString()
-      });
-    }
-
-    // Check current version first
-    if (fs.existsSync(NOTES_FILE)) {
-      const currentData = JSON.parse(fs.readFileSync(NOTES_FILE, 'utf8'));
-      if (currentData.version === requestedVersion) {
-        return res.json({
-          success: true,
-          data: currentData,
-          timestamp: new Date().toISOString()
-        });
-      }
-    }
-
-    // Look for backup
-    const backups = fs.readdirSync(NOTES_BACKUP_DIR)
-      .filter(file => file.startsWith('notes-'))
-      .sort()
-      .reverse();
-
-    for (const backup of backups) {
-      try {
-        const backupPath = path.join(NOTES_BACKUP_DIR, backup);
-        const backupData = JSON.parse(fs.readFileSync(backupPath, 'utf8'));
-
-        if (backupData.version === requestedVersion) {
-          return res.json({
-            success: true,
-            data: backupData,
-            timestamp: new Date().toISOString()
-          });
-        }
-      } catch (error) {
-        console.warn(`Failed to read backup ${backup}:`, error.message);
-      }
-    }
-
-    res.status(404).json({
-      success: false,
-      error: `Version ${requestedVersion} not found`,
-      timestamp: new Date().toISOString()
-    });
-  } catch (error) {
-    console.error('Error loading notes version:', error);
-    res.status(500).json({
-      success: false,
-      error: 'Failed to load notes version',
-      timestamp: new Date().toISOString()
-    });
-  }
-});
-
-// GET /api/v1/notes/versions - List available versions
-app.get('/api/v1/notes/versions', (req, res) => {
-  try {
-    const versions = [];
-
-    // Add current version
-    if (fs.existsSync(NOTES_FILE)) {
-      const currentData = JSON.parse(fs.readFileSync(NOTES_FILE, 'utf8'));
-      versions.push({
-        version: currentData.version || 1,
-        timestamp: currentData.timestamp,
-        type: 'current'
-      });
-    }
-
-    // Add backup versions
-    const backups = fs.readdirSync(NOTES_BACKUP_DIR)
-      .filter(file => file.startsWith('notes-'))
-      .sort()
-      .reverse();
-
-    for (const backup of backups) {
-      try {
-        const backupPath = path.join(NOTES_BACKUP_DIR, backup);
-        const backupData = JSON.parse(fs.readFileSync(backupPath, 'utf8'));
-
-        versions.push({
-          version: backupData.version,
-          timestamp: backupData.timestamp,
-          type: 'backup'
-        });
-      } catch (error) {
-        console.warn(`Failed to read backup ${backup}:`, error.message);
-      }
-    }
-
-    // Remove duplicates and sort by version desc
-    const uniqueVersions = versions
-      .filter((v, index, self) => self.findIndex(v2 => v2.version === v.version) === index)
-      .sort((a, b) => b.version - a.version);
-
-    res.json({
-      success: true,
-      data: uniqueVersions,
-      timestamp: new Date().toISOString()
-    });
-  } catch (error) {
-    console.error('Error listing versions:', error);
-    res.status(500).json({
-      success: false,
-      error: 'Failed to list versions',
-      timestamp: new Date().toISOString()
-    });
-  }
-});
-
 // DELETE /api/v1/notes - Clear all notes
 app.delete('/api/v1/notes', (req, res) => {
   try {
     if (fs.existsSync(NOTES_FILE)) {
-      // Create backup before deleting
-      const currentData = JSON.parse(fs.readFileSync(NOTES_FILE, 'utf8'));
-      createBackup(currentData);
-
       fs.unlinkSync(NOTES_FILE);
     }
 
@@ -446,9 +270,10 @@ app.post('/api/notes', (req, res) => {
   res.redirect(307, '/api/v1/notes');
 });
 
-app.listen(PORT, () => {
-  console.log(`🚀 Search Suggestions Proxy Server running on http://localhost:${PORT}`);
-  console.log(`📡 Health check: http://localhost:${PORT}/api/health`);
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`🚀 Search Suggestions Proxy Server running on http://0.0.0.0:${PORT}`);
+  console.log(`📡 Health check: http://localhost:${PORT}/api/health or http://192.168.1.11:${PORT}/api/health`);
   console.log(`🔍 Google endpoint: http://localhost:${PORT}/api/google-suggest?q=yourquery`);
   console.log(`🦆 DuckDuckGo endpoint: http://localhost:${PORT}/api/duckduckgo-suggest?q=yourquery`);
+  console.log(`📝 Notes API: http://localhost:${PORT}/api/v1/notes`);
 });

@@ -209,59 +209,22 @@ class LauncherService {
   }
 
   /**
-   * Open the notes application in a modal
+   * Open the notes application
    */
   async openNotesApp() {
     try {
-      // Check if notes modal already exists
-      let notesModal = document.querySelector('notes-modal');
-
-      if (!notesModal) {
-        // Create new modal
-        notesModal = document.createElement('notes-modal');
-        notesModal.setAttribute('title', 'Notes');
-        notesModal.setAttribute('size', 'fullscreen');
-        document.body.appendChild(notesModal);
-      }
-
-      // Check if notes app exists inside modal
-      let notesApp = notesModal.querySelector('notes-app');
-
-      if (!notesApp) {
-        // Create notes app component
-        notesApp = document.createElement('notes-app');
-        notesModal.appendChild(notesApp);
-
-        // Add sidebar to the notes app
-        const sidebarSlot = notesApp.shadowRoot?.querySelector('.sidebar');
-        if (sidebarSlot) {
-          const notesSidebar = document.createElement('notes-sidebar');
-          notesSidebar.setAttribute('slot', 'sidebar');
-          notesApp.appendChild(notesSidebar);
-        }
-      }
-
-      // Show the modal
-      notesModal.setAttribute('open', '');
-
-      // Focus the notes app
-      setTimeout(() => {
-        const searchInput = notesApp.shadowRoot?.getElementById('search-input');
-        if (searchInput) {
-          searchInput.focus();
-        }
-      }, 100);
-
+      console.log('Launcher: Opening notes application...');
+      // Use the same event as the notes trigger component
+      await eventBus.publish({
+        type: 'notes:trigger:clicked',
+        payload: {},
+        source: 'launcher'
+      });
+      console.log('Launcher: Notes trigger event published');
+      // Hide launcher after opening notes
+      this.hideLauncher();
     } catch (error) {
       console.error('Launcher: Failed to open notes app:', error);
-
-      // Fallback to old notes system if available
-      const notesComponent = document.querySelector('notes-popup');
-      if (notesComponent && typeof notesComponent.show === 'function') {
-        notesComponent.show();
-      } else {
-        console.warn('Launcher: Neither new nor old notes system available');
-      }
     }
   }
 
@@ -325,3 +288,6 @@ class LauncherService {
 
 // Create singleton instance
 const launcherService = new LauncherService();
+
+// Make it globally available
+window.launcherService = launcherService;

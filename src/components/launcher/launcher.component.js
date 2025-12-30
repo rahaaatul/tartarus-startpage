@@ -81,9 +81,32 @@ class Launcher extends Component {
         border: 2px solid transparent;
         border-radius: 8px;
         cursor: pointer;
-        transition: all 150ms ease;
+        transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
         text-align: center;
         min-height: 100px;
+        opacity: 0;
+        transform: translateY(20px) scale(0.95);
+        animation: shortcutEnter 400ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+      }
+
+      .shortcut-item:nth-child(1) { animation-delay: 50ms; }
+      .shortcut-item:nth-child(2) { animation-delay: 100ms; }
+      .shortcut-item:nth-child(3) { animation-delay: 150ms; }
+      .shortcut-item:nth-child(4) { animation-delay: 200ms; }
+      .shortcut-item:nth-child(5) { animation-delay: 250ms; }
+      .shortcut-item:nth-child(6) { animation-delay: 300ms; }
+      .shortcut-item:nth-child(7) { animation-delay: 350ms; }
+      .shortcut-item:nth-child(8) { animation-delay: 400ms; }
+
+      @keyframes shortcutEnter {
+        from {
+          opacity: 0;
+          transform: translateY(20px) scale(0.95);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
       }
 
       .shortcut-item:hover,
@@ -355,7 +378,9 @@ class Launcher extends Component {
   }
 
   show() {
-    this.shortcuts = launcherService.getEnabledShortcuts();
+    console.log('Launcher: Showing launcher...');
+    this.shortcuts = window.launcherService.getEnabledShortcuts();
+    console.log('Launcher: Loaded', this.shortcuts.length, 'shortcuts');
     this.currentFocusIndex = 0;
 
     // Re-render with current shortcuts
@@ -363,10 +388,12 @@ class Launcher extends Component {
       this.isVisible = true;
       const overlay = this.shadow.querySelector('.launcher-overlay');
       overlay.classList.add('visible');
+      console.log('Launcher: Overlay made visible');
 
       // Focus first shortcut after animation
       setTimeout(() => {
         this.setFocus(0);
+        console.log('Launcher: Focused first shortcut');
       }, 100);
 
       // Announce to screen readers
@@ -375,9 +402,11 @@ class Launcher extends Component {
   }
 
   hide() {
+    console.log('Launcher: Hiding launcher...');
     this.isVisible = false;
     const overlay = this.shadow.querySelector('.launcher-overlay');
     overlay.classList.remove('visible');
+    console.log('Launcher: Overlay hidden');
 
     // Hide from screen readers
     overlay.setAttribute('aria-hidden', 'true');
@@ -388,6 +417,7 @@ class Launcher extends Component {
       if (triggerElement) {
         triggerElement.focus();
       }
+      console.log('Launcher: Focus returned to trigger element');
     }, CONFIG.launcher?.animationDuration || 200);
   }
 

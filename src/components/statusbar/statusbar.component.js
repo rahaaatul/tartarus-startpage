@@ -251,26 +251,21 @@ class Statusbar extends Component {
     if (typeof eventBus !== 'undefined') {
       eventBus.subscribe('notes:trigger:clicked', () => {
         const notesComponent = document.querySelector('notes-popup');
-        if (notesComponent && typeof notesComponent.show === 'function') {
-          notesComponent.show();
+        if (notesComponent && typeof notesComponent.showNotesPopup === 'function') {
+          notesComponent.showNotesPopup();
         }
       });
     }
 
     this.refs.fastlink.onclick = () => {
       console.log('Pokeball clicked');
-      // Open notes popup (legacy support)
-      const notesComponent = document.querySelector('notes-popup');
-      console.log('Notes component found:', notesComponent);
-      if (notesComponent) {
-        if (typeof notesComponent.show === 'function') {
-          notesComponent.show();
-        } else if (typeof notesComponent.showNotesPopup === 'function') {
-          // Fallback to old method
-          notesComponent.showNotesPopup();
-        }
+      // Open launcher
+      const launcherComponent = document.querySelector('launcher-menu');
+      console.log('Launcher component found:', launcherComponent);
+      if (launcherComponent && typeof launcherComponent.show === 'function') {
+        launcherComponent.show();
       } else {
-        console.log('Notes component not found');
+        console.log('Launcher component not found');
       }
     }
 

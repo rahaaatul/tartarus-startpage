@@ -16,7 +16,7 @@ class NotesStorage {
       const data = await response.json();
 
       if (data.success) {
-        return data.notes;
+        return data.data;
       } else {
         throw new Error(data.error || 'Failed to load notes');
       }

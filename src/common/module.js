@@ -7,6 +7,7 @@ const components = {
   'tabs-list': Tabs,
   'notes-popup': Notes,
   'notes-trigger': NotesTrigger,
+  'launcher-menu': Launcher,
 };
 
 Object.keys(components).forEach(componentName => {

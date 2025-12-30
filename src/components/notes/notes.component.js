@@ -12,6 +12,7 @@ class Notes extends Component {
     this.currentNotes = '';
     this.refreshInterval = null;
     this.isSaving = false;
+    this.saveTimeout = null;
   }
 
   imports() {
@@ -27,22 +28,30 @@ class Notes extends Component {
         position: fixed;
         top: 50%;
         left: 50%;
-        transform: translate(-50%, -50%);
-        background: rgba(40, 40, 40, 0.95);
+        transform: translate(-50%, -50%) scale(0.9);
+        background: rgba(0, 0, 0, 0.8);
         border: 1px solid #d4be98;
-        border-radius: 8px;
-        padding: 20px;
+        border-radius: 12px;
+        padding: 2rem;
         width: 500px;
         max-width: 90vw;
         max-height: 80vh;
         z-index: 10000;
         display: none;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-        backdrop-filter: blur(10px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(8px);
+        flex-direction: column;
+        opacity: 0;
+        transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
       }
 
       .notes-popup.visible {
-        display: block;
+        display: flex;
+      }
+
+      .notes-popup.visible {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
       }
 
       .notes-header {
@@ -76,8 +85,8 @@ class Notes extends Component {
       }
 
       .notes-textarea {
+        flex: 1;
         width: 100%;
-        height: 300px;
         background: rgba(30, 30, 30, 0.8);
         border: 1px solid rgba(212, 190, 152, 0.3);
         border-radius: 4px;
@@ -88,6 +97,8 @@ class Notes extends Component {
         resize: vertical;
         outline: none;
         line-height: 1.4;
+        min-height: 100px;
+        max-height: none;
       }
 
       .notes-textarea:focus {
@@ -211,6 +222,12 @@ class Notes extends Component {
   hideNotesPopup() {
     if (!this.isVisible) return;
 
+    // Clear any pending save timeout
+    if (this.saveTimeout) {
+      clearTimeout(this.saveTimeout);
+      this.saveTimeout = null;
+    }
+
     // Stop real-time refresh
     this.stopRealtimeRefresh();
 
@@ -312,11 +329,17 @@ class Notes extends Component {
       }
     });
 
-    // Immediate auto-save on every change
+    // Debounced auto-save on changes
     this.refs.textarea.oninput = () => {
       const content = this.refs.textarea.value;
-      // Save immediately on every keystroke
-      this.saveNotes(content);
+      // Clear previous timeout
+      if (this.saveTimeout) {
+        clearTimeout(this.saveTimeout);
+      }
+      // Set new timeout for delayed save
+      this.saveTimeout = setTimeout(() => {
+        this.saveNotes(content);
+      }, 1000); // Save after 1 second of inactivity
     };
   }
 
