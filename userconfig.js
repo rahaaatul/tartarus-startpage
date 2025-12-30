@@ -32,6 +32,9 @@ const default_config = {
   localIcons: false,
   fastlink: "https://chatgpt.com/",
   openLastVisitedTab: true,
+  download: {
+    rootPath: ".", // Root directory for download browser (relative to project root, "." = project root, or absolute path like "C:/Users/RGX")
+  },
   tabs: [
     {
       name: "chi ll",

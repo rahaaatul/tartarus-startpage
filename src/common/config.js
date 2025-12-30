@@ -34,6 +34,9 @@ class Config {
     tabs: [],
     keybindings: {
       "s": 'search-bar'
+    },
+    download: {
+      rootPath: '.'
     }
   };
 

@@ -3,6 +3,8 @@ const cors = require('cors');
 const https = require('https');
 const fs = require('fs');
 const path = require('path');
+const archiver = require('archiver');
+const mime = require('mime-types');
 
 // Simple XML parser for Google suggestions
 function parseGoogleXML(xmlString) {
@@ -261,6 +263,290 @@ app.delete('/api/v1/notes', (req, res) => {
   }
 });
 
+// Download server functionality
+const DEFAULT_ROOT_PATH = __dirname;
+
+// Browse directory
+app.get('/browse', (req, res) => {
+  const dirPath = req.query.path || '';
+  const rootPath = req.query.root || '.';
+  const fullRootPath = path.isAbsolute(rootPath) ? rootPath : path.resolve(DEFAULT_ROOT_PATH, rootPath);
+  const fullPath = path.join(fullRootPath, dirPath);
+
+  console.log('Browse request:', { dirPath, rootPath, fullRootPath, fullPath });
+
+  if (!fs.existsSync(fullPath)) {
+    return res.status(404).send('Directory not found');
+  }
+
+  const stat = fs.statSync(fullPath);
+  if (!stat.isDirectory()) {
+    return res.redirect(`/download?path=${encodeURIComponent(dirPath)}&type=file`);
+  }
+
+  renderDirectory(fullPath, dirPath, res);
+});
+
+// Download file or directory
+app.get('/download', (req, res) => {
+  const itemPath = req.query.path || '';
+  const type = req.query.type || 'file';
+  const rootPath = req.query.root || '.';
+  const fullRootPath = path.isAbsolute(rootPath) ? rootPath : path.resolve(DEFAULT_ROOT_PATH, rootPath);
+  const fullPath = path.join(fullRootPath, itemPath);
+
+  if (!fs.existsSync(fullPath)) {
+    return res.status(404).send('File or directory not found');
+  }
+
+  if (type === 'file') {
+    serveFile(fullPath, itemPath, res);
+  } else if (type === 'dir') {
+    serveDirectory(fullPath, itemPath, res);
+  } else {
+    res.status(400).send('Invalid type');
+  }
+});
+
+// Bulk download multiple files/folders as ZIP
+app.get('/download/bulk', (req, res) => {
+  const paths = req.query.paths;
+  const rootPath = req.query.root || '.';
+  if (!paths) {
+    return res.status(400).send('No paths specified');
+  }
+
+  let pathArray;
+  try {
+    pathArray = JSON.parse(paths);
+  } catch (error) {
+    return res.status(400).send('Invalid paths format');
+  }
+
+  if (!Array.isArray(pathArray) || pathArray.length === 0) {
+    return res.status(400).send('Paths must be a non-empty array');
+  }
+
+  serveBulkZip(pathArray, rootPath, res);
+});
+
+// Helper function to render directory
+function renderDirectory(fullPath, relativePath, res) {
+  fs.readdir(fullPath, { withFileTypes: true }, (err, items) => {
+    if (err) {
+      return res.status(500).send('Error reading directory');
+    }
+
+    const parentPath = path.dirname(relativePath);
+    const parentLink = parentPath !== '.' ? `<a href="/browse?path=${encodeURIComponent(parentPath)}">../</a><br>` : '';
+
+    const itemsHtml = items.map(item => {
+      const itemPath = path.join(relativePath, item.name);
+      const displayName = item.isDirectory() ? `${item.name}/` : item.name;
+
+      if (item.isDirectory()) {
+        return `
+          <div class="item directory">
+            <a href="/browse?path=${encodeURIComponent(itemPath)}">${displayName}</a>
+            <a href="/download?path=${encodeURIComponent(itemPath)}&type=dir" class="download-link">[Download ZIP]</a>
+          </div>
+        `;
+      } else {
+        return `
+          <div class="item file">
+            <a href="/download?path=${encodeURIComponent(itemPath)}&type=file">${displayName}</a>
+          </div>
+        `;
+      }
+    }).join('');
+
+    const html = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>Download Server - ${relativePath || 'Root'}</title>
+        <style>
+          body {
+            font-family: 'JetBrains Mono', 'Fira Code', 'Roboto Mono', monospace;
+            margin: 0;
+            padding: 20px;
+            background: #1d2021;
+            color: #d4be98;
+            line-height: 1.5;
+          }
+          .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #32302f;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(212, 190, 152, 0.1);
+          }
+          h1 {
+            color: #d4be98;
+            border-bottom: 2px solid #d4be98;
+            padding-bottom: 10px;
+            margin-top: 0;
+            font-size: 1.5rem;
+          }
+          .item {
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(212, 190, 152, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 200ms ease;
+          }
+          .item:hover {
+            background: rgba(212, 190, 152, 0.05);
+            border-radius: 4px;
+          }
+          .item a {
+            text-decoration: none;
+            color: #d4be98;
+            font-weight: 500;
+          }
+          .item a:hover {
+            color: #a9b665;
+            text-decoration: underline;
+          }
+          .directory a:first-child {
+            font-weight: bold;
+            color: #7daea3;
+          }
+          .download-link {
+            color: #89b482;
+            font-size: 0.9em;
+            padding: 4px 8px;
+            border: 1px solid #89b482;
+            border-radius: 4px;
+            transition: all 200ms ease;
+          }
+          .download-link:hover {
+            background: #89b482;
+            color: #1d2021;
+            text-decoration: none;
+          }
+          .path {
+            color: rgba(212, 190, 152, 0.7);
+            font-size: 0.9em;
+            margin-bottom: 20px;
+            padding: 8px 12px;
+            background: rgba(212, 190, 152, 0.05);
+            border-radius: 4px;
+          }
+          .parent-link {
+            margin-bottom: 16px;
+            padding: 8px 12px;
+            background: rgba(212, 190, 152, 0.05);
+            border-radius: 4px;
+            display: inline-block;
+          }
+          .parent-link a {
+            color: #7daea3;
+          }
+          .parent-link a:hover {
+            color: #a9b665;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <h1>📁 Directory Browser</h1>
+          <div class="path">Current path: ${relativePath || 'Root'}</div>
+          ${parentPath !== '.' ? `<div class="parent-link"><a href="/browse?path=${encodeURIComponent(parentPath)}">⬆️ Parent Directory</a></div>` : ''}
+          ${itemsHtml}
+        </div>
+      </body>
+      </html>
+    `;
+
+    res.send(html);
+  });
+}
+
+// Helper function to serve file
+function serveFile(fullPath, relativePath, res) {
+  const stat = fs.statSync(fullPath);
+  const mimeType = mime.lookup(fullPath) || 'application/octet-stream';
+  const fileName = path.basename(relativePath);
+
+  res.setHeader('Content-Type', mimeType);
+  res.setHeader('Content-Length', stat.size);
+  res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
+
+  const stream = fs.createReadStream(fullPath);
+  stream.pipe(res);
+}
+
+// Helper function to serve directory as ZIP
+function serveDirectory(fullPath, relativePath, res) {
+  const dirName = path.basename(relativePath) || 'root';
+  const zipFileName = `${dirName}.zip`;
+
+  res.setHeader('Content-Type', 'application/zip');
+  res.setHeader('Content-Disposition', `attachment; filename="${zipFileName}"`);
+
+  const archive = archiver('zip', {
+    zlib: { level: 0 } // Store mode - no compression
+  });
+
+  archive.on('error', (err) => {
+    throw err;
+  });
+
+  archive.pipe(res);
+
+  // Add directory contents to zip
+  archive.directory(fullPath, dirName);
+
+  archive.finalize();
+}
+
+// Helper function to serve bulk ZIP with multiple files/folders
+function serveBulkZip(paths, rootPath, res) {
+  const fullRootPath = path.isAbsolute(rootPath) ? rootPath : path.resolve(DEFAULT_ROOT_PATH, rootPath);
+  const timestamp = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
+  const zipFileName = `bulk-download-${timestamp}.zip`;
+
+  res.setHeader('Content-Type', 'application/zip');
+  res.setHeader('Content-Disposition', `attachment; filename="${zipFileName}"`);
+
+  const archive = archiver('zip', {
+    zlib: { level: 0 } // Store mode - no compression
+  });
+
+  archive.on('error', (err) => {
+    throw err;
+  });
+
+  archive.pipe(res);
+
+  // Add each path to the ZIP
+  paths.forEach(itemPath => {
+    const fullPath = path.join(fullRootPath, itemPath);
+
+    if (!fs.existsSync(fullPath)) {
+      console.warn(`Bulk ZIP: Path not found: ${fullPath}`);
+      return;
+    }
+
+    const stat = fs.statSync(fullPath);
+    const itemName = path.basename(itemPath);
+
+    if (stat.isDirectory()) {
+      // Add directory with its contents
+      archive.directory(fullPath, itemName);
+    } else {
+      // Add file
+      archive.file(fullPath, { name: itemName });
+    }
+  });
+
+  archive.finalize();
+}
+
 // Backward compatibility - redirect old endpoints to v1
 app.get('/api/notes', (req, res) => {
   res.redirect(307, '/api/v1/notes');
@@ -276,4 +562,5 @@ app.listen(PORT, '0.0.0.0', () => {
   console.log(`🔍 Google endpoint: http://localhost:${PORT}/api/google-suggest?q=yourquery`);
   console.log(`🦆 DuckDuckGo endpoint: http://localhost:${PORT}/api/duckduckgo-suggest?q=yourquery`);
   console.log(`📝 Notes API: http://localhost:${PORT}/api/v1/notes`);
+  console.log(`⬇️ Download browser: http://localhost:${PORT}/browse`);
 });

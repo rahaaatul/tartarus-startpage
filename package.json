@@ -20,8 +20,10 @@
   },
   "homepage": "https://github.com/AllJavi/tartarus-startpage#readme",
   "dependencies": {
+    "archiver": "^7.0.1",
     "cors": "^2.8.5",
     "express": "^5.1.0",
+    "mime-types": "^3.0.2",
     "node-fetch": "^3.3.2"
   }
 }

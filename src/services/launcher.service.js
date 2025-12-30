@@ -92,6 +92,15 @@ class LauncherService {
         enabled: false,
         order: 3
       },
+      downloading: {
+        id: 'downloading',
+        label: 'Downloading',
+        icon: '⬇️',
+        action: 'downloading:open',
+        description: 'Browse and download files',
+        enabled: true,
+        order: 5
+      },
       fileShare: {
         id: 'fileShare',
         label: 'File Share',
@@ -202,6 +211,10 @@ class LauncherService {
       // TODO: Implement downloads manager
     });
 
+    eventBus.subscribe('downloading:open', () => {
+      this.openDownloadBrowser();
+    });
+
     eventBus.subscribe('fileshare:open', () => {
       console.log('File share shortcut executed - feature not implemented yet');
       // TODO: Implement file sharing
@@ -225,6 +238,29 @@ class LauncherService {
       this.hideLauncher();
     } catch (error) {
       console.error('Launcher: Failed to open notes app:', error);
+    }
+  }
+
+  /**
+   * Open the download browser
+   */
+  async openDownloadBrowser() {
+    try {
+      console.log('Launcher: Opening download browser...');
+      // Show download component
+      const downloadComponent = document.querySelector('download-browser');
+      if (downloadComponent && typeof downloadComponent.show === 'function') {
+        downloadComponent.show();
+        console.log('Launcher: Download browser component shown');
+        // Hide launcher after opening download browser
+        this.hideLauncher();
+      } else {
+        console.warn('Launcher: Download component not found');
+        // Fallback to opening in new window
+        window.open('http://localhost:3001/browse', '_blank');
+      }
+    } catch (error) {
+      console.error('Launcher: Failed to open download browser:', error);
     }
   }
 

@@ -8,6 +8,7 @@ const components = {
   'notes-popup': Notes,
   'notes-trigger': NotesTrigger,
   'launcher-menu': Launcher,
+  'download-browser': DownloadComponent,
 };
 
 Object.keys(components).forEach(componentName => {
